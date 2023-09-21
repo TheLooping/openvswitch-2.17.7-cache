@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "cache.h": "c",
+        "my_cache_strategy.h": "c",
+        "my_memory_pool.h": "c",
+        "my_forward.h": "c"
+    }
+}
