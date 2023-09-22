@@ -80,9 +80,6 @@ main(int argc, char *argv[])
     struct ovs_vswitchd_exit_args exit_args = {&exiting, &cleanup};
     int retval;
 
-    // 初始化内存池
-    memory_pool_t* mp = memory_pool_t_init(REQUEST_SIZE);
-    bool memory_pool_lock = false;// 内存池锁,0表示未加锁,1表示加锁
 
     set_program_name(argv[0]);
     ovsthread_id_init();

@@ -541,6 +541,13 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
 	struct sw_flow_key key;
 	int error;
 
+#ifndef CREATE_MEMPOOL_T
+#define CREATE_MEMPOOL_T
+    // 初始化内存池
+    static memory_pool_t* mp = memory_pool_t_init(REQUEST_SIZE);
+    static bool memory_pool_lock = false;// 内存池锁,0表示未加锁,1表示加锁
+#endif
+
 	/* 自定义缓存 */
 	key_value_pair_t *kv = NULL;
 	int forward_times = 1;
