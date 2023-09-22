@@ -28,7 +28,11 @@ openvswitch_sources = \
 	vport-internal_dev.c \
 	vport-netdev.c \
 	nsh.c \
-	meter.c
+	meter.c \
+	my_cache_strategy.c \
+	my_cache.c \
+	my_forward.c \
+	my_memory.c 
 
 vport_geneve_sources = vport-geneve.c
 vport_vxlan_sources = vport-vxlan.c
