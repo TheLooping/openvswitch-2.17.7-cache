@@ -41,6 +41,7 @@ void forwardDataANDPara(memory_pool_t *mp, forward_data_t *myForwardData) {
     cacheStrategyPara.thisNodeCacheCapacity = mp->num_free_chunk * CHUNK_SIZE;
 	if (whetherCache(&cacheStrategyPara)) {
 		//满足缓存策略
+        myForwardData->start = myForwardData->start + sizeof(forward_data_t);
         store_key_value_pair(mp, myForwardData->start, myForwardData->len);
 	}
 

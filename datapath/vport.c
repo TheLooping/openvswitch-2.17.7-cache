@@ -569,7 +569,7 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
 		// kv 指向命中的key_value_pair(链表头部)
 		// TODO : 生成一个完整转发数据包 生成myForwardData结构体
 		// TODO :  skb(sk_buff) 的 五元组、payload;修改key(sw_flow_key)的五元组
-		request_t *myRequest = (request_t *)(skb->data);
+		request_t *myRequest = (request_t *)(skb->data + header_len + 3);
 		makeForwardData(myRequest, myForwardData, kv);
 		// 每次转发key_value_pair的一个块
 		chunk_header = (chunk_header_t *)(mp->chunk_start + kv->chunk_id * CHUNK_SIZE);
@@ -602,16 +602,17 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
 
 			
 			// TODO : kfree掉原有的skb，重新分配skb
-			response_skb = alloc_skb(skb->data - skb->head + header_len + myForwardData->len + sizeof(forward_data_t), GFP_ATOMIC);
+			response_skb = alloc_skb(skb->data - skb->head + header_len + myForwardData->len + sizeof(forward_data_t) + 3, GFP_ATOMIC);
 
 			
 			response_skb->len = 0;
 			skb_reserve(response_skb, skb->data - skb->head);
 			skb_reserve(response_skb, header_len);// 预留出以太网头部、IP头部、UDP头部的空间
 			// 向后填充数据，tail指针后移
-			skb_put(response_skb, sizeof(forward_data_t) + myForwardData->len);
-			memcpy(response_skb->data, myForwardData, sizeof(forward_data_t));
-			memcpy(response_skb->data + sizeof(forward_data_t), myForwardData->start, myForwardData->len);
+			skb_put(response_skb, sizeof(forward_data_t) + myForwardData->len + 3);
+			strcpy(response_skb->data, "RES");
+			memcpy(response_skb->data + 3, myForwardData, sizeof(forward_data_t));
+			memcpy(response_skb->data + 3 + sizeof(forward_data_t), myForwardData->start, myForwardData->len);
 			// 向前填充头部，data指针前移
 			skb_push(response_skb, sizeof(struct udphdr));
 			response_skb->h.uh = response_skb->data;
